@@ -1,0 +1,135 @@
+import os, uuid
+from azure.identity import DefaultAzureCredential
+from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
+from dotenv import load_dotenv
+from utils.dataSetup import *
+
+load_dotenv()
+
+
+accountStorage = os.environ.get('ACCOUNT_STORAGE')
+
+try:
+    
+    # Quickstart code goes here
+    print("Azure Blob Storage Python quickstart sample")
+    
+#-------------------------
+
+    #CONNECTING TO AZURE
+    account_url = f"https://{accountStorage}.blob.core.windows.net"
+    default_credential = DefaultAzureCredential()
+
+    # Create the BlobServiceClient object
+    blob_service_client = BlobServiceClient(account_url, credential=default_credential)
+    print('success connecting')
+    
+#-------------------------
+
+    
+    
+#-------------------------
+#CREATING A CONTAINER
+    
+    # Create a unique name for the container
+    testContainerName = str("test-container")
+
+    # Create the container (CAN ONLY BE RUN ONCE AS YOU ARE CREATING IT)
+    #container_client = blob_service_client.create_container(container_name)
+    
+#------------------------------
+
+
+
+#------------------------------
+#UPLOADING BLOBS TO YOUR CONTAINER
+    
+    # Create a local directory to hold blob data
+    localDataPath = "./data"
+
+    # Create a file in the local data directory to upload and download
+    localFileName = "petbarn" + ".csv"
+    upload_file_path = os.path.join(localDataPath, localFileName)
+
+
+
+    # Create a blob client using the local file name as the name for the blob
+    blob_client = blob_service_client.get_blob_client(container=testContainerName, blob=localFileName)
+
+    print("\nUploading to Azure Storage as blob:\n\t" + localFileName)
+
+    # Upload the created file
+    #with open(file=upload_file_path, mode="rb") as data:
+     #   blob_client.upload_blob(data)
+        
+#------------------------------
+
+
+#------------------------------
+#ACCESSING YOUR CONTAINER
+    containerClient = blob_service_client.get_container_client(container=testContainerName)
+    
+    
+    #TESTING ACCESS
+    blobList = containerClient.list_blobs()
+    for b in blobList:
+        print("t/" + b.name)
+
+#-----------------------------
+    
+
+except Exception as ex:
+    print('Exception:')
+    print(ex)
+
+
+
+
+
+
+
+
+OLD MAIN PT.2 (44mins in tutorial)
+import os, uuid
+from azure.identity import DefaultAzureCredential
+from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
+from dotenv import load_dotenv
+from utils.dataSetup import *
+
+load_dotenv()
+
+accountStorage = os.environ.get('ACCOUNT_STORAGE')
+
+azureDB = AzureDB()
+azureDB.access_container("test-container")
+azureDB.download_blob("petbarn.csv")
+# azureDB.list_blobs()
+# df = azureDB.access_blob_csv("petbarn.csv")
+# print(df.head())
+
+
+
+
+OLD MAIN PT.3 (48mins in tutorial)
+
+import os, uuid
+from azure.identity import DefaultAzureCredential
+from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
+from dotenv import load_dotenv
+from utils.dataSetup import *
+from utils.dimension_classes import *
+
+load_dotenv()
+
+
+
+petStore = ModelAbstract()
+petStore.dimension_generator("petStore_dim", columns=["Name","Longitude","Latitude"])
+
+
+
+
+
+
+IN DATA dataSetup
+'mssql+pyodbc://{sqlUser}:{sqlPass}@{newServer}/{database}?driver=ODBC+Driver+18+for+SQL+Server'
